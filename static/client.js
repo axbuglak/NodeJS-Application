@@ -1,5 +1,3 @@
-'use strict';
-
 const transport = {};
 
 let callId = 1;
@@ -16,7 +14,7 @@ transport.http = (url) => (structure) => {
         new Promise((resolve, reject) => {
           const id = callId++;
           const method = name + '/' + methodName;
-          const packet = { type: 'call', id, method, args };
+          const packet = { type: 'call', id, method, ...args };
           fetch(url + '/api', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -64,7 +62,7 @@ const scaffold = (url) => {
 };
 
 (async () => {
-  const api = await scaffold('ws://localhost:8001')({
+  const api = await scaffold('http://localhost:8001')({
     auth: {
       signin: ['login', 'password'],
       signout: [],
@@ -74,6 +72,6 @@ const scaffold = (url) => {
       method: ['arg'],
     },
   });
-  const data = await api.auth.signin('marcus', 'marcus');
+  const data = await api.auth.signin({ login: 'alex', password: 'marcus' });
   console.dir({ data });
 })();

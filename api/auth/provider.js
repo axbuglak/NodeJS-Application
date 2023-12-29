@@ -28,6 +28,6 @@
   },
 
   async getUser(login) {
-    return db.pg.row('Account', { login });
+    return db.crud('Account').read(login, 'login');
   },
 });

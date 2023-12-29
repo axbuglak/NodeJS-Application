@@ -3,8 +3,8 @@ INSERT INTO "Account" ("id", "login", "password")
 VALUES (lastval(), 'admin', 'ypMEd9FwvtlOjcvH94iICQ==:V6LnSOVwXzENxeLCJk59Toadea7oaA1IxYulAOtKkL9tBxjEPOw085vYalEdLDoe8xbrXQlhh7QRGzrSe8Bthw==');
 
 INSERT INTO "Identifier" DEFAULT VALUES;
-INSERT INTO "Account" ("id", "login", "password")
-VALUES (lastval(), 'marcus', 'dpHw0OUNBz76nuqrXZbeYQ==:wpvUVgi8Yp9rJ0yZyBWecaWP2EL/ahpxZY74KOVfhAYbAZSq6mWqjsQwtCvIPcSKZqUVpVb13JcSciB2fA+6Tg==');
+INSERT INTO "Account" ("id", "login", "password") 
+VALUES (lastval(), 'alex', '$scrypt$N=32768,r=8,p=1,maxmem=67108864$pfFUcL2OHuK2KpHMSwYjkkfvWqTjLsBBXku9sGDYhUw$5VgNfrcdnUEszwTnUcORdgBbnQ+4NZbWn0v2u44/kyIwI3umY4E1N0gtsGHG+1GTEkYV83eAK56FyoO1zaRJUQ');
 
 INSERT INTO "Identifier" DEFAULT VALUES;
 INSERT INTO "Account" ("id", "login", "password")
