@@ -1,6 +1,10 @@
 ({
   access: 'private',
-  method: async () => ({ status: 'fulfilled', value: { name: 'hello' } }),
+  type: 'post',
+  method: async () => {
+    console.log('hello Chat');
+    return { status: 'fulfilled', value: { name: 'hello' } };
+  },
   // context.state = { pg: lib.db.connection };
 
   // try {

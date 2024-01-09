@@ -1,5 +1,6 @@
 ({
   access: 'public',
+  type: 'post',
   method: async ({ login, password }) => {
     const user = await api.auth
       .provider()
