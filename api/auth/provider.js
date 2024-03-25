@@ -21,6 +21,7 @@
 
   deleteSession(token) {
     db.pg.delete('Session', { token });
+    return;
   },
 
   async registerUser(login, password) {

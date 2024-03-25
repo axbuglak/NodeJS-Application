@@ -9,13 +9,12 @@ transport.ws = (url) => (structure) => {
   for (const name of services) {
     api[name] = {};
     const service = structure[name];
-    const methods = Object.keys(service);
-    for (const methodName of methods) {
+    for (const [methodName, methodType] of Object.entries(service)) {
       api[name][methodName] = (args) =>
         new Promise((resolve) => {
           const id = callId++;
           const method = name + '/' + methodName;
-          const packet = { type: 'call', id, method, args };
+          const packet = { type: methodType, id, method, args };
           socket.send(JSON.stringify(packet));
           socket.onmessage = (event) => {
             const data = JSON.parse(event.data);
@@ -55,7 +54,10 @@ transport.http = (url, style) => (structure) => {
           }
           fetch(fetchUrl, {
             method: fetchMethod,
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+              'Content-Type': 'application/json',
+              credentials: 'include',
+            },
             body: fetchMethod !== 'GET' ? JSON.stringify(packet) : null,
           }).then((res) => {
             if (res.status === 200) resolve(res.json());
@@ -74,34 +76,44 @@ const scaffold = (url, style) => {
 
 (async () => {
   const api = await scaffold(
-    'http://localhost:8001',
-    'rest',
+    'ws://localhost:8001',
+    'rpc',
   )({
     auth: {
-      signin: 'post',
+      signin: 'call',
       signout: 'post',
       restore: 'post',
     },
     messenger: {
-      get: 'get',
+      get: 'call',
+      uploadPhoto: 'stream',
+      downloadPhoto: 'stream',
     },
   });
-  const data = await api.auth.signin({ login: 'alex', password: 'marcus' });
-  setTimeout(async () => {
-    await api.messenger.get({});
-  }, 1000);
-  setTimeout(async () => {
-    await api.messenger.get({});
-  }, 2000);
-  setTimeout(async () => {
-    await api.messenger.get({});
-  }, 3000);
-  setTimeout(async () => {
-    await api.messenger.get({});
-  }, 5000);
-  setTimeout(async () => {
-    const result = await api.messenger.get({});
-    console.log(result);
-  }, 6000);
-  console.dir({ data });
+  // const data = await api.auth.signin({ login: 'alex', password: 'marcus' });
+  const formInput = document.getElementById('fileInput');
+  formInput.onchange = async () => {
+    const files = Array.from(formInput.files);
+    for (const file of files) {
+      const streamId = await api.messenger
+        .uploadPhoto({
+          name: file.name,
+          size: file.size,
+        })
+        .then((res) => res.streamId);
+      const reader = file.stream().getReader();
+      let chunk;
+      while (!(chunk = await reader.read()).done) {
+        console.log(chunk.value);
+        await api.messenger.uploadPhoto({
+          streamId,
+          chunk: Array.from(chunk.value),
+          name: file.name,
+          size: chunk.size,
+        });
+      }
+    }
+  };
+
+  await api.messenger.downloadPhoto({ name: 'dragon.png' });
 })();
